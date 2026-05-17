@@ -48,6 +48,9 @@ const commands = [
   new SlashCommandBuilder()
     .setName('ticket-kapat')
     .setDescription('🔒 Bulunduğunuz ticket kanalını kapatır'),
+  new SlashCommandBuilder()
+    .setName('durum')
+    .setDescription('📊 Botun durumunu, ping ve uptime bilgisini gösterir'),
 ].map((c) => c.toJSON());
 
 async function registerCommands() {
@@ -80,6 +83,28 @@ client.on('interactionCreate', async (interaction) => {
   // ── COMMANDS ──
   if (interaction.isChatInputCommand()) {
     const { commandName } = interaction;
+
+    if (commandName === 'durum') {
+      const uptime = process.uptime();
+      const h = Math.floor(uptime / 3600);
+      const m = Math.floor((uptime % 3600) / 60);
+      const s = Math.floor(uptime % 60);
+      const uptimeStr = `${h}sa ${m}dk ${s}sn`;
+      const embed = new EmbedBuilder()
+        .setTitle('📊 Ticket Bot — Durum')
+        .setColor(0x57F287)
+        .addFields(
+          { name: '🏓 Ping',          value: `${client.ws.ping}ms`,             inline: true },
+          { name: '⏱️ Uptime',        value: uptimeStr,                          inline: true },
+          { name: '🎫 Açık Ticketlar',value: `${openTickets.size}`,             inline: true },
+          { name: '🤖 Bot Tag',        value: client.user.tag,                   inline: true },
+          { name: '📡 Sunucu Sayısı', value: `${client.guilds.cache.size}`,     inline: true },
+          { name: '💚 Durum',          value: 'Online ✅',                       inline: true },
+        )
+        .setFooter({ text: 'JÖH Ticket Sistemi v2.0 | Watchdog Aktif 🛡️' })
+        .setTimestamp();
+      return interaction.reply({ embeds: [embed], ephemeral: true });
+    }
 
     if (commandName === 'yardim') {
       const embed = new EmbedBuilder()
