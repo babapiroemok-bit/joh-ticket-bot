@@ -74,7 +74,8 @@ async function sendLog(guild, embed) {
 // ── READY ─────────────────────────────────
 client.once('ready', async () => {
   console.log(`✅ Ticket Bot aktif: ${client.user.tag}`);
-  await registerCommands();
+  console.log(`✅ Sunucu sayısı: ${client.guilds.cache.size}`);
+  console.log(`✅ GUILD_ID: ${GUILD_ID}`);
   setupWatchdog(client, TOKEN, GUILD_ID);
 });
 
@@ -310,4 +311,18 @@ async function handleTicketDelete(interaction) {
   await interaction.channel.delete('Ticket silindi').catch(() => {});
 }
 
-client.login(TOKEN);
+// ── BAŞLAT ────────────────────────────────
+if (!TOKEN) { console.error('❌ TICKET_TOKEN env var eksik!'); process.exit(1); }
+if (!GUILD_ID) { console.error('❌ GUILD_ID env var eksik!'); process.exit(1); }
+
+console.log('🚀 Ticket Bot başlatılıyor...');
+console.log(`📋 CLIENT_ID: ${CLIENT_ID}`);
+console.log(`📋 GUILD_ID: ${GUILD_ID}`);
+console.log(`📋 TOKEN başı: ${TOKEN.slice(0,15)}...`);
+
+registerCommands().then(() => {
+  client.login(TOKEN).catch((err) => {
+    console.error('❌ Login hatası:', err.message);
+    process.exit(1);
+  });
+});
