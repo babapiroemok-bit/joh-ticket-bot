@@ -23,6 +23,8 @@ const client = new Client({
   partials: [Partials.Channel, Partials.Message],
 });
 
+const { setupWatchdog } = require('./watchdog');
+
 const TOKEN    = process.env.TICKET_TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 const CLIENT_ID = '1505285791918592220';
@@ -70,6 +72,7 @@ async function sendLog(guild, embed) {
 client.once('ready', async () => {
   console.log(`✅ Ticket Bot aktif: ${client.user.tag}`);
   await registerCommands();
+  setupWatchdog(client, TOKEN, GUILD_ID);
 });
 
 // ── SLASH COMMAND HANDLER ─────────────────
